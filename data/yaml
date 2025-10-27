@@ -1,0 +1,104 @@
+
+Each folder contains `.png` fundus images corresponding to the respective label.
+
+---
+
+## ⚙️ Preprocessing Pipeline
+
+The following preprocessing steps were applied to enhance image quality and feature extraction:
+
+1. **Gaussian Blur** – to reduce noise.  
+2. **Blending** – merge original and blurred images for balance.  
+3. **CLAHE (Contrast Limited Adaptive Histogram Equalization)** – improves contrast in color channels.  
+4. **Normalization** – scale pixel values to `[0, 1]`.  
+5. **Augmentation** – random flips, brightness, and contrast changes.
+
+---
+
+## 🧱 Model Architecture
+
+### 1️⃣ CNN Model
+A custom 3-layer convolutional neural network:
+- Conv2D → MaxPooling → BatchNorm (×3)
+- Dense(32, relu) → Dropout(0.16)
+- Softmax output (5 classes)
+- Optimizer: **Adam (1e-5)**  
+- Loss: **Categorical Crossentropy**
+
+### 2️⃣ Transfer Learning Model
+Based on **ResNet50 (ImageNet pretrained)**:
+- Base layers frozen
+- Global Average Pooling
+- Dense(1024, relu) + Dropout(0.5)
+- Dense(5, softmax)
+
+Used for **feature extraction**.
+
+---
+
+## 🧮 Machine Learning Models (on extracted features)
+
+| Model | Accuracy | Precision | F1-Score | Recall |
+|:------|:---------:|:----------:|:---------:|:-------:|
+| Random Forest | 0.71 | 0.76 | 0.73 | 0.71 |
+| SVM | 0.75 | 0.73 | 0.73 | 0.75 |
+| Voting (KNN + RF) | **0.77** | **0.75** | **0.75** | **0.77** |
+| XGBoost | 0.74 | 0.73 | 0.73 | 0.74 |
+| CatBoost | 0.76 | 0.74 | 0.74 | 0.76 |
+
+✅ **Best Model:** Voting Classifier (KNN + Random Forest)  
+> Slightly outperforms CatBoost in all major metrics.
+
+---
+
+## 📊 Results Visualization
+
+- **Confusion Matrix** for each model  
+- **Metric Comparison Graphs** (Accuracy, Precision, F1, Recall)
+- **Model performance plots** using `matplotlib` & `seaborn`
+
+---
+
+## 🧠 Key Insights
+
+- CLAHE + Blending preprocessing improves image clarity and contrast.
+- Transfer learning with ResNet50 significantly boosts feature quality.
+- Ensemble methods like **Voting (KNN+RF)** outperform individual ML models.
+- CatBoost performs competitively and efficiently handles multi-class classification.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Languages:** Python  
+- **Libraries:**  
+  - Deep Learning: `TensorFlow`, `Keras`  
+  - Image Processing: `OpenCV`, `Matplotlib`  
+  - ML Models: `scikit-learn`, `xgboost`, `catboost`  
+  - Visualization: `seaborn`, `matplotlib`, `pandas`
+
+---
+
+## 📈 Future Improvements
+
+- Fine-tune ResNet50 or try EfficientNet-B3.
+- Apply advanced augmentation (rotation, zoom, elastic transforms).
+- Optimize ensemble weights for Voting Classifier.
+- Experiment with attention mechanisms or Vision Transformers (ViT).
+
+---
+
+## 🧩 How to Run
+
+```bash
+# Clone the repository
+git clone https://github.com/<your-username>/<your-repo-name>.git
+
+# Navigate to the directory
+cd <your-repo-name>
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the main notebook or script
+python main.py
